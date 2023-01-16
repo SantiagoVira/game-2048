@@ -5,10 +5,8 @@ fn main() {
 
   fill_square(&mut state);
 
-  println!("{:#?}", state);
 
-
-  draw()
+  draw(state)
   
 }
 
@@ -23,11 +21,11 @@ fn fill_square(state: &mut [[u8; 4]; 4]){
 }
 
 
-fn draw() {
+fn draw(state: [[u8; 4]; 4]) {
   for y in 0..4{
     println!("{}", "-".repeat(7 * 4 + 1));
-    for i in 0..4{
-      print!("| {0: <5}", i + y * 4);
+    for x in 0..4{
+      print!("| {0: <5}", if state[y][x] != 0 {format!("{}", state[y][x])} else {String::new()});
     }
     println!("|");
   }
