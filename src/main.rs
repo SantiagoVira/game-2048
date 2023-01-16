@@ -3,7 +3,9 @@ use rand::Rng;
 fn main() {
   let mut board = Board::new();
 
-  board.fill_square();
+  for _i in 0..16 {
+    board.fill_square();
+  }
   board.draw();
   
 }
@@ -39,8 +41,14 @@ impl Board {
   pub fn fill_square(&mut self) {
     let mut rng = rand::thread_rng();
 
-    let x = rng.gen_range(0..4);
-    let y = rng.gen_range(0..4);
+    let mut x: usize;
+    let mut y: usize;
+
+    loop {
+      x = rng.gen_range(0..4);
+      y = rng.gen_range(0..4);
+      if self.squares[y][x] == 0 { break; }
+    }
     let num = rng.gen_range(1..3) * 2;
   
     self.squares[y][x] = num;
