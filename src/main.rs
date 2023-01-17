@@ -5,6 +5,7 @@ fn main() {
   let mut board = Board::new();
 
   loop {
+    print!("{}[2J", 27 as char);
     board.fill_square();
     board.draw();
 
