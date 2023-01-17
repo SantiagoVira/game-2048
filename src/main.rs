@@ -1,32 +1,23 @@
-use std::io::Error;
-
 use rand::Rng;
-use dialoguer::{console::Term, theme::ColorfulTheme, Select};
+use dialoguer::{theme::ColorfulTheme, Select};
 
 fn main() {
   let mut board = Board::new();
 
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
-  board.fill_square();
+  loop {
+    board.fill_square();
+    board.draw();
 
-  board.draw();
-  board.shift_left_to_right();
+    let dir = get_user_dir();
+    board.shift(dir);
 
-  board.draw();
+    if board.check_is_lose() { break; }
+  }
 
-  let dir = get_user_dir();
-  println!("{}", dir);
+  println!("Better luck next time kiddo!")
 }
 
 fn get_user_dir() -> &'static str {
-
   let items = vec!["Up", "Right", "Down", "Left"];
   let selection = Select::with_theme(&ColorfulTheme::default())
       .items(&items)
@@ -65,12 +56,14 @@ impl Board {
     println!("{}", "-".repeat(7 * 4 + 1));
   }
 
-  // fill_squares will mutate self, hence a mut ref
+  // fill_square will mutate self, hence a mut ref
   pub fn fill_square(&mut self) {
     let mut rng = rand::thread_rng();
 
     let mut x: usize;
     let mut y: usize;
+
+    if self.check_is_full() { return; }
 
     loop {
       x = rng.gen_range(0..4);
@@ -82,19 +75,100 @@ impl Board {
     self.squares[y][x] = num;
   }
 
-  pub fn shift_left_to_right(&mut self){
-    // Shift right
-    for row_num in 0..4{
-      self.squares[row_num] = shift_row(self.squares[row_num], true);
-    }
+  pub fn shift(&mut self, dir: &str){
+    let res = match dir{
+      "Up" => self.shift_bottom_to_top(),
+      "Right" => self.shift_left_to_right(),
+      "Down" => self.shift_top_to_bottom(),
+      "Left" => self.shift_right_to_left(),
+      &_ => [[0; 4]; 4]
+    };
+
+    self.squares = res;
   }
 
-  pub fn shift_right_to_left(&mut self){
-      // Shift left
-      for row_num in 0..4{
-        self.squares[row_num] = shift_row(self.squares[row_num], false);
+  pub fn shift_left_to_right(&self) -> [[u32; 4]; 4]{
+    let mut new_squares = [[0u32; 4]; 4];
+    for row_num in 0..4{
+      new_squares[row_num] = shift_row(self.squares[row_num], true);
+    }
+
+    return new_squares
+  }
+
+  pub fn shift_right_to_left(&self) -> [[u32; 4]; 4]{
+    let mut new_squares = [[0u32; 4]; 4];
+    for row_num in 0..4{
+      new_squares[row_num] = shift_row(self.squares[row_num], false);
+    }
+
+    return new_squares
+  }
+
+  pub fn shift_bottom_to_top(&self) -> [[u32; 4]; 4]{
+    let mut new_squares = [[0u32; 4]; 4];
+    for col_num in 0..4{
+      let mut col = [0, 0 ,0 ,0];
+      for j in 0..4{
+        col[j] = self.squares[j][col_num];
+      }
+      let final_col = shift_row(col, false);
+      for j in 0..4{
+        new_squares[j][col_num] = final_col[j];
       }
     }
+
+    return new_squares
+  }
+
+  pub fn shift_top_to_bottom(&self) -> [[u32; 4]; 4]{
+    let mut new_squares = [[0u32; 4]; 4];
+    for col_num in 0..4{
+      let mut col = [0, 0 ,0 ,0];
+      for j in 0..4{
+        col[j] = self.squares[j][col_num];
+      }
+      let final_col = shift_row(col, true);
+      for j in 0..4{
+        new_squares[j][col_num] = final_col[j];
+      }
+    }
+
+    return new_squares
+  }
+
+  pub fn check_is_full(&self) -> bool {
+    for y in 0..4{
+      for x in 0..4{
+        if self.squares[y][x] == 0 { return false; }
+      }
+    }
+    return true;
+  }
+
+  pub fn check_is_lose(&self) -> bool {
+    for dir in ["Up", "Right", "Down", "Left"]{
+      let res = match dir{
+        "Up" => self.shift_bottom_to_top(),
+        "Right" => self.shift_left_to_right(),
+        "Down" => self.shift_top_to_bottom(),
+        "Left" => self.shift_right_to_left(),
+        &_ => [[0; 4]; 4]
+      };
+
+      for y in 0..4{
+        for x in 0..4{
+          if self.squares[y][x] != res[y][x]{ 
+            // println!("({}, {}) would go from {} to {} when pushed {}", x, y, self.squares[y][x], res[y][x], dir);
+            return false; 
+          }
+        }
+      }
+
+    }
+    return true;
+  }
+
     
   }
   
