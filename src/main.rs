@@ -1,7 +1,26 @@
 use rand::Rng;
 use dialoguer::{theme::ColorfulTheme, Select};
 
+enum Direction{
+  UP,
+  RIGHT,
+  DOWN,
+  LEFT
+}
+
+impl Direction {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Direction::UP => "Up",
+            Direction::RIGHT => "Right",
+            Direction::DOWN => "Down",
+            Direction::LEFT => "Left"
+        }
+    }
+}
+
 fn main() {
+
   let mut board = Board::new();
 
   loop {
@@ -18,8 +37,8 @@ fn main() {
   println!("Better luck next time kiddo!")
 }
 
-fn get_user_dir() -> &'static str {
-  let items = vec!["Up", "Right", "Down", "Left"];
+fn get_user_dir() -> Direction {
+  let items = vec![Direction::UP, Direction::RIGHT, Direction::DOWN, Direction::LEFT];
   let selection = Select::with_theme(&ColorfulTheme::default())
       .items(&items)
       .with_prompt("Choose your direction")
@@ -29,6 +48,8 @@ fn get_user_dir() -> &'static str {
 
   return items[selection];
 }
+
+
 
 struct Board {
   squares: [[u32; 4]; 4],
@@ -76,13 +97,12 @@ impl Board {
     self.squares[y][x] = num;
   }
 
-  pub fn shift(&mut self, dir: &str){
+  pub fn shift(&mut self, dir: Direction){
     let res = match dir{
-      "Up" => self.shift_bottom_to_top(),
-      "Right" => self.shift_left_to_right(),
-      "Down" => self.shift_top_to_bottom(),
-      "Left" => self.shift_right_to_left(),
-      &_ => [[0; 4]; 4]
+      Direction::UP => self.shift_bottom_to_top(),
+      Direction::RIGHT => self.shift_left_to_right(),
+      Direction::DOWN => self.shift_top_to_bottom(),
+      Direction::LEFT => self.shift_right_to_left(),
     };
 
     self.squares = res;
