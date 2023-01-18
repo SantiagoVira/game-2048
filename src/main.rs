@@ -1,6 +1,9 @@
+use std::fmt::Formatter;
+
 use rand::Rng;
 use dialoguer::{theme::ColorfulTheme, Select};
 
+#[derive(Clone, Copy, Debug)]
 enum Direction{
   UP,
   RIGHT,
@@ -8,15 +11,10 @@ enum Direction{
   LEFT
 }
 
-impl Direction {
-    fn as_str(&self) -> &'static str {
-        match self {
-            Direction::UP => "Up",
-            Direction::RIGHT => "Right",
-            Direction::DOWN => "Down",
-            Direction::LEFT => "Left"
-        }
-    }
+impl std::fmt::Display for Direction{
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{:#?}", self)
+  }
 }
 
 fn main() {
