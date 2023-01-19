@@ -44,7 +44,7 @@ fn get_user_dir() -> Direction {
       .interact()
       .unwrap();
 
-  return items[selection];
+  items[selection]
 }
 
 
@@ -112,7 +112,7 @@ impl Board {
       new_squares[row_num] = shift_row(self.squares[row_num], true);
     }
 
-    return new_squares
+    new_squares
   }
 
   pub fn shift_right_to_left(&self) -> [[u32; 4]; 4]{
@@ -121,7 +121,7 @@ impl Board {
       new_squares[row_num] = shift_row(self.squares[row_num], false);
     }
 
-    return new_squares
+    new_squares
   }
 
   pub fn shift_bottom_to_top(&self) -> [[u32; 4]; 4]{
@@ -137,7 +137,7 @@ impl Board {
       }
     }
 
-    return new_squares
+    new_squares
   }
 
   pub fn shift_top_to_bottom(&self) -> [[u32; 4]; 4]{
@@ -153,7 +153,7 @@ impl Board {
       }
     }
 
-    return new_squares
+    new_squares
   }
 
   pub fn check_is_full(&self) -> bool {
@@ -162,7 +162,8 @@ impl Board {
         if square == 0 { return false; }
       }
     }
-    return true;
+
+    true
   }
 
   pub fn check_is_lose(&self) -> bool {
@@ -185,7 +186,7 @@ impl Board {
       }
 
     }
-    return true;
+    true
   }
 
     
@@ -223,6 +224,6 @@ fn shift_row(mut start_row: [u32; 4], rev: bool) -> [u32; 4]{
       
       if rev {final_row.reverse();}
       
-      return final_row;
+      final_row
     }
   
