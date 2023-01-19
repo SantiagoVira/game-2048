@@ -61,11 +61,11 @@ impl Board {
 
   // draw shouldnt need to mutate the board, hence an immut. ref to self
   pub fn draw(&self) {
-    for y in 0..4{
+    for row in self.squares{
       println!("{}", "-".repeat(7 * 4 + 1));
-      for x in 0..4{
-        if self.squares[y][x] != 0 {
-          print!("| {0: <5}", self.squares[y][x]);
+      for square in row{
+        if square != 0 {
+          print!("| {0: <5}", square);
         } else {
           print!("|      ");
         }
@@ -157,9 +157,9 @@ impl Board {
   }
 
   pub fn check_is_full(&self) -> bool {
-    for y in 0..4{
-      for x in 0..4{
-        if self.squares[y][x] == 0 { return false; }
+    for row in self.squares{
+      for square in row{
+        if square == 0 { return false; }
       }
     }
     return true;
